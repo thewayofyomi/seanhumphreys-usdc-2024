@@ -5,40 +5,35 @@
  * @returns {JSON} - Search results.
  * */
 
-function findSearchTermInBooks(searchTerm, scannedTextObj) {
-  /** You will need to implement your search and
-   * return the appropriate object here. */
+const findSearchTermInBooks = (searchTerm, scannedTextObj) => {
+  if (typeof searchTerm === "string" || searchTerm instanceof String) {
+    let results = {
+      SearchTerm: searchTerm,
+      Results: [],
+    };
 
-  let results = {
-    SearchTerm: searchTerm,
-    Results: [],
-  };
+    for (let i = 0; i < scannedTextObj.length; i++) {
+      let book = scannedTextObj[i];
 
-  let validSearchTerm = isString(searchTerm);
+      for (let j = 0; j < book.Content.length; j++) {
+        let content = book.Content[j];
 
-  for (let i = 0; i < scannedTextObj.length; i++) {
-    let book = scannedTextObj[i];
-
-    for (let j = 0; j < book.Content.length; j++) {
-      let content = book.Content[j];
-
-      if (content.Text.includes(validSearchTerm)) {
-        results.Results.push({
-          ISBN: book.ISBN,
-          Page: content.Page,
-          Line: content.Line,
-        });
+        if (content.Text.includes(searchTerm)) {
+          results.Results.push({
+            ISBN: book.ISBN,
+            Page: content.Page,
+            Line: content.Line,
+          });
+        }
       }
+      return results;
     }
-    return results;
-  }
-}
-
-const isString = (param) => {
-  if (typeof param === "string" || param instanceof String) {
-    return param;
   } else {
-    return "Not A Valid Search Term.";
+    let results = {
+      SearchTerm: searchTerm,
+      Results: `${searchTerm} is not a valid search term.`,
+    };
+    return results;
   }
 };
 
@@ -79,6 +74,38 @@ const twentyLeaguesOut = {
   ],
 };
 
+const darkPositiveResult = {
+  SearchTerm: "dark",
+  Results: [
+    {
+      ISBN: "9780000528531",
+      Page: 31,
+      Line: 8,
+    },
+  ],
+};
+
+const caseSensitiveResult = {
+  SearchTerm: "The",
+  Results: [
+    {
+      ISBN: "9780000528531",
+      Page: 31,
+      Line: 8,
+    },
+  ],
+};
+
+const whiteNegativeResult = {
+  SearchTerm: "white",
+  Results: [],
+};
+
+const intNegativeResult = {
+  SearchTerm: 808,
+  Results: "808 is not a valid search term.",
+};
+
 /*
  _   _ _   _ ___ _____   _____ _____ ____ _____ ____  
 | | | | \ | |_ _|_   _| |_   _| ____/ ___|_   _/ ___| 
@@ -113,4 +140,50 @@ if (test2result.Results.length == 1) {
   console.log("FAIL: Test 2");
   console.log("Expected:", twentyLeaguesOut.Results.length);
   console.log("Received:", test2result.Results.length);
+}
+
+/** Positive test results */
+const test3result = findSearchTermInBooks("dark", twentyLeaguesIn);
+if (JSON.stringify(darkPositiveResult) === JSON.stringify(test3result)) {
+  console.log("PASS: Test 3");
+  console.log(darkPositiveResult);
+} else {
+  console.log("FAIL: Test 3");
+  console.log("Expected:", darkPositiveResult);
+  console.log("Received:", test3result);
+}
+
+/** Case Sensitive test results */
+const test4result = findSearchTermInBooks("The", twentyLeaguesIn);
+if (JSON.stringify(caseSensitiveResult) === JSON.stringify(test4result)) {
+  console.log("PASS: Test 4");
+  console.log(caseSensitiveResult);
+} else {
+  console.log("FAIL: Test 4");
+  console.log("Expected:", caseSensitiveResult);
+  console.log("Received:", test4result);
+}
+
+/** Negative test results */
+const test5result = findSearchTermInBooks("white", twentyLeaguesIn);
+if (JSON.stringify(whiteNegativeResult) === JSON.stringify(test5result)) {
+  console.log("PASS: Test 5");
+  console.log(whiteNegativeResult);
+} else {
+  console.log("FAIL: Test 5");
+  console.log("Expected:", whiteNegativeResult);
+  console.log("Received:", test5result);
+}
+
+const test6result = findSearchTermInBooks(808, twentyLeaguesIn);
+if (
+  typeof intNegativeResult.SearchTerm === "string" ||
+  intNegativeResult.SearchTerm instanceof String
+) {
+  console.log("PASS: Test 6");
+  console.log(intNegativeResult);
+} else {
+  console.log("FAIL: Test 6");
+  console.log("Expected:", intNegativeResult);
+  console.log("Received:", test6result);
 }
