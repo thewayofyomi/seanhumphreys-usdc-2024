@@ -26,8 +26,8 @@ const findSearchTermInBooks = (searchTerm, scannedTextObj) => {
           });
         }
       }
-      return results;
     }
+    return results;
   } else {
     let results = {
       SearchTerm: searchTerm,
